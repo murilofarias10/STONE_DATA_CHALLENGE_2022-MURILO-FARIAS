@@ -1,0 +1,290 @@
+﻿--criar base de dados
+CREATE DATABASE "Stone"
+    WITH 
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    CONNECTION LIMIT = -1;
+
+COMMENT ON DATABASE "Stone"
+    IS 'Base de dados criado para entrega final do desafio: Data Challenge - STONE';
+
+--criar schema
+CREATE SCHEMA "Data-Challenge"
+    AUTHORIZATION postgres;
+
+COMMENT ON SCHEMA "Data-Challenge"
+    IS 'Schema criado para entrega final do desafio: Data Challenge - STONE';
+
+-- criar tabela nome portfolio_geral_tratado seguindo o modelo de entidade relacionamento e o dicionario de dados.
+
+CREATE TABLE "Data-Challenge".portfolio_geral_tratado
+(
+    contrato_id character varying(100) NOT NULL,
+    dt_ref_portfolio date NOT NULL,
+    safra date NOT NULL,
+    nr_documento character varying(100) NOT NULL,
+    status_contrato character varying(100) NOT NULL,
+    dt_contrato date NOT NULL,
+    dt_desembolso date NOT NULL,
+    dt_vencimento date NOT NULL,
+    dt_wo date NOT NULL,
+    prazo bigint NOT NULL,
+    vlr_desembolsado numeric(15, 2)[] NOT NULL,
+    vlr_tarifa numeric(15, 2)[] NOT NULL,
+    vlr_pgto_esperado numeric(15, 2)[] NOT NULL,
+    juros_mes numeric(15, 2)[] NOT NULL,
+    juros_diario numeric(15, 2)[] NOT NULL,
+    perc_retencao numeric(15, 2)[] NOT NULL,
+    vlr_pgto_realizado numeric(15, 2)[] NOT NULL,
+    vlr_saldo_devedor numeric(15, 2)[] NOT NULL,
+    vlr_saldo_devedor_esperado numeric(15, 2)[] NOT NULL,
+    dspp bigint NOT NULL,
+    dsp bigint NOT NULL,
+    flag_transacao numeric NOT NULL,
+    PRIMARY KEY (contrato_id, dt_ref_portfolio)
+);
+
+ALTER TABLE IF EXISTS "Data-Challenge".portfolio_geral_tratado
+    OWNER to postgres;
+
+COMMENT ON TABLE "Data-Challenge".portfolio_geral_tratado
+  IS 'Seguindo o modelo de entidade relacionamento e o dicionario de dados.';
+
+-- criar tabela nome portfolio_tpv seguindo o modelo de entidade relacionamento e o dicionario de dados.
+
+CREATE TABLE "Data-Challenge".portfolio_tpv
+(
+    nr_documento character varying(100) NOT NULL,
+    dt_transacao character varying(100) NOT NULL,
+    qtd_transacoes bigint NOT NULL,
+    vlr_tpv double precision NOT NULL,
+    PRIMARY KEY (nr_documento, dt_transacao)
+);
+
+ALTER TABLE IF EXISTS "Data-Challenge".portfolio_tpv
+    OWNER to postgres;
+
+COMMENT ON TABLE "Data-Challenge".portfolio_tpv
+    IS 'Seguindo o modelo de entidade relacionamento e o dicionario de dados.';
+
+-- criar tabela nome portfolio_comunicados seguindo o modelo de entidade relacionamento e o dicionario de dados.
+
+CREATE TABLE "Data-Challenge".portfolio_comunicados
+(
+    contrato_id character varying(100) NOT NULL,
+    dt_ref_portfolio date NOT NULL,
+    data_acao date NOT NULL,
+    tipo_acao character varying(100) NOT NULL,
+    acao character varying(100) NOT NULL,
+    status character varying(100),
+    PRIMARY KEY (contrato_id, dt_ref_portfolio, tipo_acao)
+);
+
+ALTER TABLE IF EXISTS "Data-Challenge".portfolio_comunicados
+    OWNER to postgres;
+
+COMMENT ON TABLE "Data-Challenge".portfolio_comunicados
+    IS 'Seguindo o modelo de entidade relacionamento e o dicionario de dados.';
+
+-- criar tabela nome portfolio_clientes seguindo o modelo de entidade relacionamento e o dicionario de dados.
+
+CREATE TABLE "Data-Challenge".portfolio_clientes
+(
+    nr_documento character varying(100) NOT NULL,
+    tipo_empresa character varying(100) NOT NULL,
+    cidade character varying(100) NOT NULL,
+    estado character varying(100) NOT NULL,
+    subsegmento character varying(100) NOT NULL,
+    segmento character varying(100) NOT NULL,
+    PRIMARY KEY (nr_documento)
+);
+
+ALTER TABLE IF EXISTS "Data-Challenge".portfolio_clientes
+    OWNER to postgres;
+
+COMMENT ON TABLE "Data-Challenge".portfolio_clientes
+    IS 'Seguindo o modelo de entidade relacionamento e o dicionario de dados.';
+
+-- alterar na tabela portfolio_tpv adicionando a coluna dt_transacao tipo data.
+
+ALTER TABLE IF EXISTS "Data-Challenge".portfolio_tpv DROP COLUMN IF EXISTS dt_transacao;
+
+ALTER TABLE IF EXISTS "Data-Challenge".portfolio_tpv
+    ADD COLUMN dt_transacao date NOT NULL;
+ALTER TABLE IF EXISTS "Data-Challenge".portfolio_tpv
+    ADD PRIMARY KEY (dt_transacao);
+
+/* A tabela portfolio_clientes esta com PK a coluna nr_documento porem uma PK não pode ter valores duplicados, 
+sendo assim alterei a tabela e retirei a coluna nr_documento de PK */
+
+drop table "Data-Challenge".portfolio_clientes
+
+-- adicionando novamente
+
+CREATE TABLE "Data-Challenge".portfolio_clientes
+(
+    nr_documento character varying(100) NOT NULL,
+    tipo_empresa character varying(100) NOT NULL,
+    cidade character varying(100) NOT NULL,
+    estado character varying(100) NOT NULL,
+    subsegmento character varying(100) NOT NULL,
+    segmento character varying(100) NOT NULL
+);
+
+ALTER TABLE IF EXISTS "Data-Challenge".portfolio_clientes
+    OWNER to postgres;
+
+COMMENT ON TABLE "Data-Challenge".portfolio_clientes
+    IS 'Seguindo o modelo de entidade relacionamento e o dicionario de dados.';
+
+
+-- deletar tabela portfolio_comunicados por conta da coluna PK 
+
+drop table "Data-Challenge".portfolio_comunicados
+
+-- criar tabela portfolio_comunicados novamente mas chave primeira uma vez que não pode ser valor duplicado
+
+CREATE TABLE "Data-Challenge".portfolio_comunicados
+(
+    contrato_id character varying(100) NOT NULL,
+    dt_ref_portfolio date NOT NULL,
+    data_acao date NOT NULL,
+    tipo_acao character varying(100) NOT NULL,
+    acao character varying(100) NOT NULL,
+    status character varying(100) NOT NULL
+);
+
+ALTER TABLE IF EXISTS "Data-Challenge".portfolio_comunicados
+    OWNER to postgres;
+
+COMMENT ON TABLE "Data-Challenge".portfolio_comunicados
+    IS 'Seguindo o modelo de entidade relacionamento e o dicionario de dados.';
+
+
+/* Na tabela portfolio_tpv alterar o tipo da coluna dt_transacao para o tipo data
+e retirando a coluna nr_documento de PK uma vez que existem valores duplicados */
+
+drop table "Data-Challenge".portfolio_tpv
+
+CREATE TABLE "Data-Challenge".portfolio_tpv
+(
+    nr_documento character varying(100) NOT NULL,
+    dt_transacao date NOT NULL,
+    qtd_transacoes character varying(100) NOT NULL,
+    vlr_tpv double precision NOT NULL 
+);
+ALTER TABLE IF EXISTS "Data-Challenge".portfolio_tpv
+    OWNER to postgres;
+
+COMMENT ON TABLE "Data-Challenge".portfolio_tpv
+    IS 'Seguindo o modelo de entidade relacionamento e o dicionario de dados.';
+
+-- alterar na tabela portfolio_geral o tipo da coluna dt_contrato para string
+
+drop table "Data-Challenge".portfolio_geral_tratado;
+
+CREATE TABLE "Data-Challenge".portfolio_geral_tratado
+(
+    contrato_id character varying(100) NOT NULL,
+    dt_ref_portfolio date NOT NULL,
+    safra character varying(8) NOT NULL,
+    nr_documento character varying(100) NOT NULL,
+    status_contrato character varying(100) NOT NULL,
+    dt_contrato date NOT NULL,
+    dt_desembolso date NOT NULL,
+    dt_vencimento date NOT NULL,
+    dt_wo date NOT NULL,
+    prazo bigint NOT NULL,
+    vlr_desembolsado numeric(15, 2)[] NOT NULL,
+    vlr_tarifa numeric(15, 2)[] NOT NULL,
+    vlr_pgto_esperado numeric(15, 2)[] NOT NULL,
+    juros_mes numeric(15, 2)[] NOT NULL,
+    juros_diario numeric(15, 2)[] NOT NULL,
+    perc_retencao numeric(15, 2)[] NOT NULL,
+    vlr_pgto_realizado numeric(15, 2)[] NOT NULL,
+    vlr_saldo_devedor numeric(15, 2)[] NOT NULL,
+    vlr_saldo_devedor_esperado numeric(15, 2)[] NOT NULL,
+    dspp bigint NOT NULL,
+    dsp bigint NOT NULL,
+    flag_transacao numeric NOT NULL,
+    PRIMARY KEY (contrato_id, dt_ref_portfolio)
+);
+
+ALTER TABLE IF EXISTS "Data-Challenge".portfolio_geral_tratado
+    OWNER to postgres;
+
+COMMENT ON TABLE "Data-Challenge".portfolio_geral_tratado
+  IS 'Seguindo o modelo de entidade relacionamento e o dicionario de dados.';
+
+-- alterar na tabela portfolio_geral o tipo da coluna prazo para numerico
+
+drop table "Data-Challenge".portfolio_geral_tratado;
+
+CREATE TABLE "Data-Challenge".portfolio_geral_tratado
+(
+    contrato_id character varying(100) NOT NULL,
+    dt_ref_portfolio date NOT NULL,
+    safra character varying(8) NOT NULL,
+    nr_documento character varying(100) NOT NULL,
+    status_contrato character varying(100) NOT NULL,
+    dt_contrato date NOT NULL,
+    dt_desembolso date NOT NULL,
+    dt_vencimento date NOT NULL,
+    dt_wo date NOT NULL,
+    prazo numeric NOT NULL,
+    vlr_desembolsado numeric(15, 2)[] NOT NULL,
+    vlr_tarifa numeric(15, 2)[] NOT NULL,
+    vlr_pgto_esperado numeric(15, 2)[] NOT NULL,
+    juros_mes numeric(15, 2)[] NOT NULL,
+    juros_diario numeric(15, 2)[] NOT NULL,
+    perc_retencao numeric(15, 2)[] NOT NULL,
+    vlr_pgto_realizado numeric(15, 2)[] NOT NULL,
+    vlr_saldo_devedor numeric(15, 2)[] NOT NULL,
+    vlr_saldo_devedor_esperado numeric(15, 2)[] NOT NULL,
+    dspp bigint NOT NULL,
+    dsp bigint NOT NULL,
+    flag_transacao numeric NOT NULL,
+    PRIMARY KEY (contrato_id, dt_ref_portfolio)
+);
+
+ALTER TABLE IF EXISTS "Data-Challenge".portfolio_geral_tratado
+    OWNER to postgres;
+
+COMMENT ON TABLE "Data-Challenge".portfolio_geral_tratado
+  IS 'Seguindo o modelo de entidade relacionamento e o dicionario de dados.';
+
+-- alterar formatação das colunas numericas da tabela portfolio_geral_tratado
+
+drop table "Data-Challenge".portfolio_geral_tratado
+
+CREATE TABLE "Data-Challenge".portfolio_geral_tratado
+(
+    contrato_id character varying(100) NOT NULL,
+    dt_ref_portfolio date NOT NULL,
+    safra character varying(8) NOT NULL,
+    nr_documento character varying(100) NOT NULL,
+    status_contrato character varying(100) NOT NULL,
+    dt_contrato date NOT NULL,
+    dt_desembolso date NOT NULL,
+    dt_vencimento date NOT NULL,
+    dt_wo date NOT NULL,
+    prazo numeric NOT NULL,
+    vlr_desembolsado numeric(15, 2)NOT NULL,
+    perc_retencao numeric(15, 2)NOT NULL,
+    vlr_pgto_realizado numeric(15, 2)NOT NULL,
+    vlr_pgto_esperado numeric(15, 2)NOT NULL,
+	vlr_saldo_devedor numeric(15, 2)NOT NULL,
+    vlr_saldo_devedor_esperado numeric(15, 2)NOT NULL,
+    dspp bigint NOT NULL,
+    dsp bigint NOT NULL,
+    flag_transacao numeric NOT NULL,
+    PRIMARY KEY (contrato_id, dt_ref_portfolio)
+);
+
+ALTER TABLE IF EXISTS "Data-Challenge".portfolio_geral_tratado
+    OWNER to postgres;
+
+COMMENT ON TABLE "Data-Challenge".portfolio_geral_tratado
+  IS 'Seguindo o modelo de entidade relacionamento e o dicionario de dados.';
+
+
