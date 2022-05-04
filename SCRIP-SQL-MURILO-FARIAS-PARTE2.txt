@@ -1,0 +1,17 @@
+﻿
+select contrato_id, dt_ref_portfolio, nr_documento, dsp, dspp, dt_desembolso, vlr_pgto_esperado from "Data-Challenge".portfolio_geral_tratado
+
+select nr_documento, qtd_transacoes, dt_transacao from "Data-Challenge".portfolio_tpv
+
+select contrato_id, dt_ref_portfolio, tipo_acao, status, acao from "Data-Challenge".portfolio_comunicados
+
+select nr_documento, estado from "Data-Challenge".portfolio_clientes
+
+
+
+
+
+
+
+
+
