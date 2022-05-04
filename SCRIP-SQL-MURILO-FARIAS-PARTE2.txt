@@ -1,10 +1,16 @@
-﻿
+﻿--resposdendo a questão: Quantos contratos distintos existem em sua tabela de observação final, após todos os merges e etapas de ETL?
+select count (distinct contrato_id) from "Data-Challenge".portfolio_geral_tratado where dspp != 0;
+
+--trazendo dados da coluna portfolio_geral_tratado para o power bi
 select contrato_id, dt_ref_portfolio, nr_documento, dsp, dspp, dt_desembolso, vlr_pgto_esperado from "Data-Challenge".portfolio_geral_tratado
 
+--trazendo dados da coluna portfolio_tpv para o power bi
 select nr_documento, qtd_transacoes, dt_transacao from "Data-Challenge".portfolio_tpv
 
+--trazendo dados da coluna portfolio_comunicados para o power bi
 select contrato_id, dt_ref_portfolio, tipo_acao, status, acao from "Data-Challenge".portfolio_comunicados
 
+--trazendo dados da coluna portfolio_clientes para o power bi
 select nr_documento, estado from "Data-Challenge".portfolio_clientes
 
 
